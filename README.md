@@ -1,4 +1,5 @@
-#Installation
+Installation
+
 Ensure you have Python 3 and the package manager pip installed.
 
 Run the following command to access the Kaggle API using the command line:
@@ -11,7 +12,8 @@ If you run into a kaggle: command not found error, ensure that your python binar
 
 IMPORTANT: We do not offer Python 2 support. Please ensure that you are using Python 3 before reporting any issues.
 
-#API credentials
+API credentials
+
 To use the Kaggle API, sign up for a Kaggle account at https://www.kaggle.com. Then go to the 'Account' tab of your user profile (https://www.kaggle.com/<username>/account) and select 'Create API Token'. This will trigger the download of kaggle.json, a file containing your API credentials. Place this file in the location ~/.kaggle/kaggle.json (on Windows in the location C:\Users\<Windows-username>\.kaggle\kaggle.json - you can check the exact location, sans drive, with echo %HOMEPATH%). You can define a shell environment variable KAGGLE_CONFIG_DIR to change this location to $KAGGLE_CONFIG_DIR/kaggle.json (on Windows it will be %KAGGLE_CONFIG_DIR%\kaggle.json).
 
 For your security, ensure that other users of your computer do not have read access to your credentials. On Unix-based systems you can do this with the following command:
