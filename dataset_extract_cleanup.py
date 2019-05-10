@@ -70,6 +70,19 @@ for x in list_sheet_names:
 df_resp_mortality_cleaned.reset_index(inplace=True, drop=True)
 pickle.dump( df_resp_mortality_cleaned, open( 'df_resp_mortality.pkl', "wb" ) )
 
+#stacking all sheets into one dataframe horizontally
+df_resp_mortality_horizontal_stack = pd.DataFrame()
+for column in ['mortality_2000', 'mortality_2005', 'mortality_2010', 'mortality_2014']:
+    df_tmp = pd.DataFrame()
+    df_tmp['state']=df_resp_disease[x].Location
+    for x in list_sheet_names:
+        df_tmp[x] = df_resp_disease[x][column].astype(float)
+        df_tmp['year']=int(column[-4:])
+
+    df_resp_mortality_horizontal_stack = df_resp_mortality_horizontal_stack.append(df_tmp)
+
+df_resp_mortality_horizontal_stack.reset_index(inplace=True, drop=True)
+pickle.dump( df_resp_mortality_horizontal_stack, open( 'df_resp_mortality_horizontal_stack.pkl', "wb" ) )
 
 print('cleaning up pollution dataset and dumping the result into df_us_pollution.pkl')
 
@@ -84,3 +97,19 @@ df_us_pollution['year_bin'] = np.where(series_year_data<=2000, 2000,
 df_us_pollution_cleaned = df_us_pollution.drop(['State Code', 'County Code', 'Site Num', 'Address', 'County', 'City', 
                                                 'Date Local'], axis=1)
 pickle.dump( df_us_pollution_cleaned, open( 'df_us_pollution.pkl', "wb" ) )
+
+print('merging two datasets and dumping the result into correlation_table.pkl')
+
+df_merged = df_us_pollution_cleaned.merge(df_resp_mortality_horizontal_stack, left_on=['State','year_bin'], right_on=['state','year'])
+
+df_merged_tmp = df_merged.drop(['Unnamed: 0', 'state', 'year_y', 'year_x',  'NO2 Units', 
+                                'O3 Units', 'O3 1st Max Value', 'NO2 1st Max Value', 'O3 1st Max Value'
+                                'NO2 1st Max Value','NO2 1st Max Hour', 'NO2 AQI', 'O3 Units'
+                               'O3 1st Max Value', 'O3 1st Max Hour', 'O3 AQI', 'SO2 Units',
+                                'SO2 1st Max Value', 'SO2 1st Max Hour', 'SO2 AQI',
+                               'CO Units', 'CO 1st Max Value', 'CO 1st Max Hour', 'CO AQI'],axis=1, errors='ignore')
+
+correlation_graph = df_merged_tmp.corr()
+
+print(correlation_graph[:4][list_sheet_names].T)
+pickle.dump( correlation_graph, open( 'correlation_table.pkl', "wb" ) )
